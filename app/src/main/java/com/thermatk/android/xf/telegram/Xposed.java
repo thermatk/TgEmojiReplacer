@@ -2,7 +2,6 @@ package com.thermatk.android.xf.telegram;
 
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.text.Spannable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -33,25 +32,11 @@ public class Xposed implements IXposedHookLoadPackage {
             @Override
             protected Object replaceHookedMethod(MethodHookParam methodHookParam) throws Throwable {
                 CharSequence cs = ((CharSequence) methodHookParam.args[0]);
-                if (cs == null || cs.length() == 0) {
-                    return cs;
-                }
-                Spannable s;
-                boolean createNew = (boolean) methodHookParam.args[3];
-                if (!createNew && cs instanceof Spannable) {
-                    s = (Spannable) cs;
-                } else {
-                    s = Spannable.Factory.getInstance().newSpannable(cs.toString());
-                }
-                try {
-                    return s;
-                } catch (Exception e) {
-                    return cs;
-                }
+                return cs;
             }
         };
         findAndHookMethod(EmojiClass,
-                "replaceEmoji", CharSequence.class, Paint.FontMetricsInt.class, int.class, boolean.class,
+                "replaceEmoji", CharSequence.class, Paint.FontMetricsInt.class, int.class, boolean.class, new int[0].getClass(),
                 replaceEmoji_methodReplacement);
 
         try {
@@ -71,7 +56,7 @@ public class Xposed implements IXposedHookLoadPackage {
                                     imageView.setImageDrawable(TextDrawable.builder()
                                             .beginConfig()
                                             .textColor(Color.BLACK)
-                                            .fontSize(bigImgSize)// some option
+                                            .fontSize(bigImgSize)
                                             .endConfig()
                                             .buildRect(convert, Color.TRANSPARENT));
                                 } catch (Exception ignored) {
