@@ -21,7 +21,7 @@ public class Xposed implements IXposedHookLoadPackage {
 
     @Override
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
-        if (!"org.telegram.messenger".equals(loadPackageParam.packageName)) {
+        if ((!"org.telegram.messenger".equals(loadPackageParam.packageName)) && (!"org.telegram.plus".equals(loadPackageParam.packageName))) {
             return;
         }
 
