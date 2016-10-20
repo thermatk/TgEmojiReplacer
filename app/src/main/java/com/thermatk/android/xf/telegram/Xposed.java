@@ -31,12 +31,11 @@ public class Xposed implements IXposedHookLoadPackage {
         XC_MethodReplacement replaceEmoji_methodReplacement = new XC_MethodReplacement() {
             @Override
             protected Object replaceHookedMethod(MethodHookParam methodHookParam) throws Throwable {
-                CharSequence cs = ((CharSequence) methodHookParam.args[0]);
-                return cs;
+                return methodHookParam.args[0];
             }
         };
         findAndHookMethod(EmojiClass,
-                "replaceEmoji", CharSequence.class, Paint.FontMetricsInt.class, int.class, boolean.class, new int[0].getClass(),
+                "replaceEmoji", CharSequence.class, Paint.FontMetricsInt.class, int.class, boolean.class, int[].class,
                 replaceEmoji_methodReplacement);
 
         try {
