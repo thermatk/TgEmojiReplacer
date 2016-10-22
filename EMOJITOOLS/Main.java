@@ -55,11 +55,12 @@ public class Main {
         readFixedNames();
         doTheMap();
         MapToPicMap();
-        makeImgs();
+        //makeImgsTwit();
+        makeImgsGoog();
         System.out.print("Done");
     }
 
-    public static void makeImgs() {
+    public static void makeImgsTwit() {
 
         for (Map.Entry<String, PicInfo> entry: pics.entrySet()) {
             PicInfo pInfo = entry.getValue();
@@ -96,7 +97,90 @@ public class Main {
                     }
                 }
 
-                ImageIO.write(combined, "PNG", new File(basePath+"imgs/"+entry.getKey()+".png"));
+                ImageIO.write(combined, "PNG", new File(basePath+"imgsTwemoji/"+entry.getKey()+".png"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void makeImgsGoog() {
+
+        for (Map.Entry<String, PicInfo> entry: pics.entrySet()) {
+            PicInfo pInfo = entry.getValue();
+            try {
+
+                int w = (pInfo.totalCols + 1) * 66;
+                int h = (pInfo.totalRows + 1) * 66;
+                BufferedImage combined = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+
+                Graphics g = combined.getGraphics();
+
+                for (Map.Entry<String, DrawableInfo> drEntry: pInfo.drInfMap.entrySet()) {
+                    String pathKey = "emoji_u" + drEntry.getKey().replace("-","_");
+                    String path = basePath + "noto-emoji-master/png/128/" + pathKey + ".png";
+                    File f = new File(path);
+                    boolean exists = false;
+                    boolean fromFont = false;
+                    if(f.exists()) {
+                        exists = true;
+                    } else {
+                        // try a quick fe0f fix
+                        path = path.replace("_fe0f_", "_");
+                        path = path.replace("_fe0f", "");
+                        f = new File(path);
+                        if(f.exists()) {
+                            exists = true;
+                        } else {
+                            // they append zeroes, fix
+                            String[] cps = drEntry.getKey().split("-");
+                            String newS = "";
+                            for (int k=0;k<cps.length;k++) {
+                                String cp = cps[k];
+                                if (k>0) {
+                                    newS +="_";
+                                }
+
+                                if (cp.length() == 2) {
+                                    newS +="00" + cp;
+                                } else {
+                                    newS += cp;
+                                }
+                            }
+                            pathKey = "emoji_u" + newS;
+                            path = basePath + "noto-emoji-master/png/128/" + pathKey + ".png";
+                            f = new File(path);
+                            if(f.exists()) {
+                                exists = true;
+                            } else {
+                                // use those extracted from Font
+                                path = basePath + "notoEmojiExtracted/" + newS + ".png";
+                                f = new File(path);
+                                if(f.exists()) {
+                                    exists = true;
+                                    fromFont = true;
+                                }
+                            }
+                        }
+                    }
+
+                    if (exists) {
+                        BufferedImage image128 = null;
+                        if (fromFont) {
+                            image128 = ImageIO.read(f);
+                            image128 = image128.getSubimage(4, 0, 128, 128);
+                        } else {
+                            image128 = ImageIO.read(f);
+                        }
+
+                        BufferedImage image64 = resize(image128, 64,64);
+                        g.drawImage(image64,drEntry.getValue().rect.left, drEntry.getValue().rect.top, null);
+                    } else {
+                        System.out.println("ERROR MISSING: " + drEntry.getKey());
+                    }
+                }
+
+                ImageIO.write(combined, "PNG", new File(basePath+"imgsGoogleNoto/"+entry.getKey()+".png"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
