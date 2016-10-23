@@ -5,9 +5,13 @@ import android.content.res.XModuleResources;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
+import static com.thermatk.android.xf.telegram.SettingsActivity.defChoice;
+import static com.thermatk.android.xf.telegram.SettingsActivity.prefDef;
+import static com.thermatk.android.xf.telegram.SettingsActivity.prefKey;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 
 public class Xposed implements IXposedHookZygoteInit,IXposedHookLoadPackage {
@@ -16,6 +20,8 @@ public class Xposed implements IXposedHookZygoteInit,IXposedHookLoadPackage {
     @Override
     public void initZygote(IXposedHookZygoteInit.StartupParam startupParam) throws Throwable {
         MODULE_PATH = startupParam.modulePath;
+        XSharedPreferences prefs = new XSharedPreferences(BuildConfig.APPLICATION_ID, prefDef);
+        prefs.makeWorldReadable();
     }
 
     @Override
@@ -29,9 +35,29 @@ public class Xposed implements IXposedHookZygoteInit,IXposedHookLoadPackage {
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                             String path = (String)param.args[0];
                             if (path.contains("emoji/v10_emoji2.0x")) {
-                                XposedBridge.log("TGEMOJI loading replacement "+path);
+                                XSharedPreferences prefs = new XSharedPreferences(BuildConfig.APPLICATION_ID, prefDef);
 
-                                param.setResult(XModuleResources.createInstance(MODULE_PATH, null).getAssets().open("GoogleNoto/"+path.split("x_")[1]));
+                                XposedBridge.log("TGEMOJI loading replacement "+path + prefs.getInt(prefKey,defChoice));
+
+                                String folder = "";
+                                boolean notDef = true;
+                                switch (prefs.getInt(prefKey,defChoice)) {
+                                    case 0:
+                                        notDef = false;
+                                        break;
+                                    case 1:
+                                        folder = "GoogleNoto/";
+                                        break;
+                                    case 2:
+                                        folder = "EmojiOne/";
+                                        break;
+                                    case 3:
+                                        folder = "Twemoji/";
+                                        break;
+                                }
+                                if(notDef) {
+                                    param.setResult(XModuleResources.createInstance(MODULE_PATH, null).getAssets().open(folder + path.split("x_")[1]));
+                                }
                                 return;
                             }
                     }
