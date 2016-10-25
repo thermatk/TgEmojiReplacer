@@ -5,6 +5,6 @@ Replaces the Apple's emojis in Telegram's official Android client with the ones 
 
 Download from [Xposed Repo](http://repo.xposed.info/module/com.thermatk.android.xf.telegram)
 
-Emoji art supplied by EmojiOne
-Emoji art supplied by Twitter Twemoji
-Google Emoji font is under the SIL Open Font License, version 1.1.
+* Emoji art supplied by EmojiOne
+* Emoji art supplied by Twitter Twemoji
+* Google Emoji font is under the SIL Open Font License, version 1.1.
