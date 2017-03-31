@@ -34,7 +34,7 @@ public class Xposed implements IXposedHookZygoteInit,IXposedHookLoadPackage {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                             String path = (String)param.args[0];
-                            if (path.contains("emoji/v10_emoji2.0x")) {
+                            if (path.contains("emoji/v11_emoji2.0x")) {
                                 XSharedPreferences prefs = new XSharedPreferences(BuildConfig.APPLICATION_ID, prefDef);
 
                                 XposedBridge.log("TGEMOJI loading replacement "+path + prefs.getInt(prefKey,defChoice));
