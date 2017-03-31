@@ -2,14 +2,14 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.0"
+    buildToolsVersion "25.0.2"
 
     defaultConfig {
         applicationId "com.thermatk.android.xf.telegram"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 3
-        versionName "2.0"
+        versionCode 4
+        versionName "3.0"
     }
     buildTypes {
         release {
@@ -22,5 +22,5 @@ android {
 dependencies {
     provided fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.github.ceryle:RadioRealButton:v1.4.3'
-    compile 'com.android.support:appcompat-v7:25.0.0'
+    compile 'com.android.support:appcompat-v7:25.3.1'
 }
